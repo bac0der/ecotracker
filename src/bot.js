@@ -24,32 +24,32 @@ require("dotenv").config();
 
 const bot = new TelegramBot("7562256824:AAGsBS3mHczBDUsu_1edvboEzahKid40GoU", { polling: true });
 
-// const escapeMarkdown = (text) => {
-//   return text
-//       .replace(/_/g, "\\_")
-//       .replace(/\*/g, "\\*")
-//       .replace(/\[/g, "\\[")
-//       .replace(/\]/g, "\\]")
-//       .replace(/\(/g, "\\(")
-//       .replace(/\)/g, "\\)")
-//       .replace(/\~/g, "\\~")
-//       .replace(/\`/g, "\\`")
-//       .replace(/\>/g, "\\>")
-//       .replace(/\#/g, "\\#")
-//       .replace(/\+/g, "\\+")
-//       .replace(/\-/g, "\\-")
-//       .replace(/\=/g, "\\=")
-//       .replace(/\|/g, "\\|")
-//       .replace(/\{/g, "\\{")
-//       .replace(/\}/g, "\\}")
-//       .replace(/\./g, "\\.")
-//       .replace(/\!/g, "\\!");
-// };
-
 const escapeMarkdown = (text) => {
   return text
-      .replace(/([_*[\]()~`>#+-=|{}.!])/g, "\\$1"); // Barcha maxsus belgilarni escapelash
+      .replace(/_/g, "\\_")
+      .replace(/\*/g, "\\*")
+      .replace(/\[/g, "\\[")
+      .replace(/\]/g, "\\]")
+      .replace(/\(/g, "\\(")
+      .replace(/\)/g, "\\)")
+      .replace(/\~/g, "\\~")
+      .replace(/\`/g, "\\`")
+      .replace(/\>/g, "\\>")
+      .replace(/\#/g, "\\#")
+      .replace(/\+/g, "\\+")
+      .replace(/\-/g, "\\-")
+      .replace(/\=/g, "\\=")
+      .replace(/\|/g, "\\|")
+      .replace(/\{/g, "\\{")
+      .replace(/\}/g, "\\}")
+      .replace(/\./g, "\\.")
+      .replace(/\!/g, "\\!");
 };
+
+// const escapeMarkdown = (text) => {
+//   return text
+//       .replace(/([_*[\]()~`>#+-=|{}.!])/g, "\\$1"); // Barcha maxsus belgilarni escapelash
+// };
 
 
 bot.onText(/\/start/, (msg) => {

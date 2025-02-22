@@ -22,7 +22,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const { db, collection, addDoc, getDocs, query, orderBy } = require("./firebase");
 require("dotenv").config();
 
-const bot = new TelegramBot("7763969768:AAHGr47FyDCgA0NY3YZSwbBCHxETcgF8QTo", { polling: true });
+const bot = new TelegramBot("7562256824:AAGsBS3mHczBDUsu_1edvboEzahKid40GoU", { polling: true });
 
 const escapeMarkdown = (text) => {
   return text
@@ -60,11 +60,6 @@ bot.onText(/\/start/, (msg) => {
     "📋 Barcha muammolarni ko'rish uchun /issues");
 });
 
-import moment from "moment-timezone";
-
-const createdAt = moment().tz("Asia/Tashkent").format("DD.MM.YYYY, HH:mm");
-
-
 // 🌱 **Yangi muammo qo‘shish**
 bot.onText(/\/add/, (msg) => {
   const chatId = msg.chat.id;
@@ -82,7 +77,7 @@ bot.onText(/\/add/, (msg) => {
           username: msg.from.username || msg.from.first_name,
           title: issueTitle,
           description: issueDescription,
-          createdAt: createdAt
+          createdAt: new Date()
         });
 
         bot.sendMessage(chatId, escapeMarkdown("✅ Muammo muvaffaqiyatli qo‘shildi!"), { parse_mode: "MarkdownV2" });

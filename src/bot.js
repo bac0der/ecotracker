@@ -60,6 +60,11 @@ bot.onText(/\/start/, (msg) => {
     "📋 Barcha muammolarni ko'rish uchun /issues");
 });
 
+import moment from "moment-timezone";
+
+const createdAt = moment().tz("Asia/Tashkent").format("DD.MM.YYYY, HH:mm");
+
+
 // 🌱 **Yangi muammo qo‘shish**
 bot.onText(/\/add/, (msg) => {
   const chatId = msg.chat.id;
@@ -77,7 +82,7 @@ bot.onText(/\/add/, (msg) => {
           username: msg.from.username || msg.from.first_name,
           title: issueTitle,
           description: issueDescription,
-          createdAt: new Date()
+          createdAt: createdAt
         });
 
         bot.sendMessage(chatId, escapeMarkdown("✅ Muammo muvaffaqiyatli qo‘shildi!"), { parse_mode: "MarkdownV2" });

@@ -22,7 +22,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const { db, collection, addDoc, getDocs, query, orderBy } = require("./firebase");
 require("dotenv").config();
 
-const bot = new TelegramBot("7562256824:AAGsBS3mHczBDUsu_1edvboEzahKid40GoU", { polling: true });
+const bot = new TelegramBot("7763969768:AAHGr47FyDCgA0NY3YZSwbBCHxETcgF8QTo", { polling: true });
 
 const escapeMarkdown = (text) => {
   return text

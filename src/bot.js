@@ -1,55 +1,35 @@
-// const TelegramBot = require('node-telegram-bot-api');
-
-// const token = '7562256824:AAGsBS3mHczBDUsu_1edvboEzahKid40GoU';
-
-// const bot = new TelegramBot(token, {polling: true});
-
-// bot.onText(/\/echo (.+)/, (msg, match) => {
-
-//   const chatId = msg.chat.id;
-//   const resp = match[1]; // the captured "whatever"
-
-//   bot.sendMessage(chatId, resp);
-// });
-
-// bot.on('message', (msg) => {
-//   const chatId = msg.chat.id;
-
-//   bot.sendMessage(chatId, 'Received your message');
-// });
-
 const TelegramBot = require("node-telegram-bot-api");
 const { db, collection, addDoc, getDocs, query, orderBy } = require("./firebase");
 require("dotenv").config();
 
 const bot = new TelegramBot("7562256824:AAGsBS3mHczBDUsu_1edvboEzahKid40GoU", { polling: true });
 
-const escapeMarkdown = (text) => {
-  return text
-      .replace(/_/g, "\\_")
-      .replace(/\*/g, "\\*")
-      .replace(/\[/g, "\\[")
-      .replace(/\]/g, "\\]")
-      .replace(/\(/g, "\\(")
-      .replace(/\)/g, "\\)")
-      .replace(/\~/g, "\\~")
-      .replace(/\`/g, "\\`")
-      .replace(/\>/g, "\\>")
-      .replace(/\#/g, "\\#")
-      .replace(/\+/g, "\\+")
-      .replace(/\-/g, "\\-")
-      .replace(/\=/g, "\\=")
-      .replace(/\|/g, "\\|")
-      .replace(/\{/g, "\\{")
-      .replace(/\}/g, "\\}")
-      .replace(/\./g, "\\.")
-      .replace(/\!/g, "\\!");
-};
-
 // const escapeMarkdown = (text) => {
 //   return text
-//       .replace(/([_*[\]()~`>#+-=|{}.!])/g, "\\$1"); // Barcha maxsus belgilarni escapelash
+//       .replace(/_/g, "\\_")
+//       .replace(/\*/g, "\\*")
+//       .replace(/\[/g, "\\[")
+//       .replace(/\]/g, "\\]")
+//       .replace(/\(/g, "\\(")
+//       .replace(/\)/g, "\\)")
+//       .replace(/\~/g, "\\~")
+//       .replace(/\`/g, "\\`")
+//       .replace(/\>/g, "\\>")
+//       .replace(/\#/g, "\\#")
+//       .replace(/\+/g, "\\+")
+//       .replace(/\-/g, "\\-")
+//       .replace(/\=/g, "\\=")
+//       .replace(/\|/g, "\\|")
+//       .replace(/\{/g, "\\{")
+//       .replace(/\}/g, "\\}")
+//       .replace(/\./g, "\\.")
+//       .replace(/\!/g, "\\!");
 // };
+
+const escapeMarkdown = (text) => {
+  return text
+    .replace(/([_*[\]()~`>#+-=|{}.!])/g, "\\$1"); // Barcha maxsus belgilarni escapelash
+};
 
 
 bot.onText(/\/start/, (msg) => {

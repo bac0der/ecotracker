@@ -1,28 +1,29 @@
-const TelegramBot = require("node-telegram-bot-api");
-const { db, collection, addDoc, getDocs, query, orderBy } = require("./firebase");
 require("dotenv").config();
+const TelegramBot = require("node-telegram-bot-api");
+const { db, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy } = require("./firebase");
 
-const bot = new TelegramBot("7763969768:AAHGr47FyDCgA0NY3YZSwbBCHxETcgF8QTo", { polling: true });
+// Telegram bot tokeni .env faylidan olinadi
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 
+// Markdown formatidagi maxsus belgilarni escapelash
 const escapeMarkdown = (text) => {
-  return text
-    .replace(/([_*[\]()~>#+-=|{}.!])/g, "\\$1"); // Barcha maxsus belgilarni escapelash
+  return text.replace(/([_*[\]()~>#+-=|{}.!])/g, "\\$1");
 };
 
-
+// /start komandasi
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "🌍 Assalomu alaykum! Bu Eco Tracker bot. \n" +
+  bot.sendMessage(chatId, "🌍 Assalomu alaykum! Bu *Eco Tracker* bot. \n\n" +
     "♻ Siz ekologik muammolarni xabar bera olasiz. \n\n" +
-    "➕ Yangi muammo qo'shish uchun /add \n" +
-    "📋 Barcha muammolarni ko'rish uchun /issues");
+    "➕ *Yangi muammo qo'shish:* /add \n" +
+    "📋 *Barcha muammolar:* /issues", { parse_mode: "MarkdownV2" });
 });
 
-// 🌱 **Yangi muammo qo‘shish**
-bot.onText(/\/add/, (msg) => {
+// 🌱 Yangi muammo qo‘shish
+bot.onText(/\/add/, async (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, escapeMarkdown( "📌 Muammo nomini yozing:"), { parse_mode: "MarkdownV2" });
-  
+  bot.sendMessage(chatId, escapeMarkdown("📌 Muammo nomini yozing:"), { parse_mode: "MarkdownV2" });
+
   bot.once("message", async (response) => {
     const issueTitle = response.text;
     bot.sendMessage(chatId, escapeMarkdown("📄 Muammo tavsifini yozing:"), { parse_mode: "MarkdownV2" });
@@ -47,35 +48,34 @@ bot.onText(/\/add/, (msg) => {
   });
 });
 
-// **Muammo o‘chirish funksiyasi**
+// 🔥 Muammo o‘chirish funksiyasi
 async function deleteIssue(issueId) {
   try {
-    await db.collection('issues').doc(issueId).delete();
-    console.log(Issue with ID ${issueId} deleted successfully);
+    await deleteDoc(doc(db, "issues", issueId));
+    console.log(`Issue with ID ${issueId} deleted successfully`);
   } catch (error) {
-    console.error('Error deleting issue:', error);
+    console.error("Error deleting issue:", error);
   }
 }
 
+// ❌ /delete_issue komandasi
 bot.onText(/\/delete_issue (.+)/, async (msg, match) => {
   const chatId = msg.chat.id;
-  const issueId = match[1].trim(); // Foydalanuvchi yuborgan ID
+  const issueId = match[1]?.trim();
 
   if (!issueId) {
-    return bot.sendMessage(chatId, 'Muammo ID kiritilmadi.');
+    return bot.sendMessage(chatId, "⚠ Muammo ID kiritilmadi.");
   }
 
   try {
     await deleteIssue(issueId);
-    bot.sendMessage(chatId, Muammo muvaffaqiyatli o‘chirildi: ${issueId});
+    bot.sendMessage(chatId, `✅ Muammo muvaffaqiyatli o‘chirildi: *${escapeMarkdown(issueId)}*`, { parse_mode: "MarkdownV2" });
   } catch (error) {
-    bot.sendMessage(chatId, 'Muammo o‘chirishda xatolik yuz berdi.');
+    bot.sendMessage(chatId, "❌ Muammo o‘chirishda xatolik yuz berdi.");
   }
 });
 
-
-
-// 📊 **Barcha muammolarni ko‘rish**
+// 📊 Barcha muammolarni ko‘rish
 bot.onText(/\/issues/, async (msg) => {
   const chatId = msg.chat.id;
 
@@ -88,13 +88,13 @@ bot.onText(/\/issues/, async (msg) => {
       return;
     }
 
-    let issuesList = "📋 **Barcha muammolar:**\n\n";
+    let issuesList = "📋 *Barcha muammolar:*\n\n";
     querySnapshot.forEach((doc) => {
       const issue = doc.data();
-      issuesList += 📌 *${issue.title}* \n📝 ${issue.description} \n👤 ${issue.username} \n📅 ${new Date(issue.createdAt.toDate()).toLocaleString()}\n\n`;
+      issuesList += `📌 *${escapeMarkdown(issue.title)}* \n📝 ${escapeMarkdown(issue.description)} \n👤 ${escapeMarkdown(issue.username)} \n📅 ${new Date(issue.createdAt.toDate()).toLocaleString()}\n\n`;
     });
 
-    bot.sendMessage(chatId, escapeMarkdown(issuesList), { parse_mode: "MarkdownV2" }, { parse_mode: "Markdown" });
+    bot.sendMessage(chatId, issuesList, { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.error("❌ Xatolik:", error);
     bot.sendMessage(chatId, escapeMarkdown("❌ Xatolik yuz berdi, qaytadan urinib ko‘ring."), { parse_mode: "MarkdownV2" });

@@ -1,9 +1,8 @@
-require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const { db, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy } = require("./firebase");
 
 // Telegram bot tokeni .env faylidan olinadi
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot("7763969768:AAHGr47FyDCgA0NY3YZSwbBCHxETcgF8QTo", { polling: true });
 
 // Markdown formatidagi maxsus belgilarni escapelash
 const escapeMarkdown = (text) => {

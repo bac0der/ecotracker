@@ -15,7 +15,8 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(chatId, "🌍 Assalomu alaykum! Bu *Eco Tracker* bot. \n\n" +
     "♻ Siz ekologik muammolarni xabar bera olasiz. \n\n" +
     "➕ *Yangi muammo qo'shish:* /add \n" +
-    "📋 *Barcha muammolar:* /issues", { parse_mode: "MarkdownV2" });
+    "📋 *Barcha muammolar:* /issues \n" + 
+    "👤 *Siz qoʻshgan muammolar:* /myissues", { parse_mode: "MarkdownV2" });
 });
 
 // 🌱 Yangi muammo qo‘shish
@@ -91,6 +92,32 @@ bot.onText(/\/issues/, async (msg) => {
     querySnapshot.forEach((doc) => {
       const issue = doc.data();
       issuesList += `📌 *${escapeMarkdown(issue.title)}* \n📝 ${escapeMarkdown(issue.description)} \n👤 ${escapeMarkdown(issue.username)} \n📅 ${new Date(issue.createdAt.toDate()).toLocaleString()}\n\n`;
+    });
+
+    bot.sendMessage(chatId, issuesList, { parse_mode: "MarkdownV2" });
+  } catch (error) {
+    console.error("❌ Xatolik:", error);
+    bot.sendMessage(chatId, escapeMarkdown("❌ Xatolik yuz berdi, qaytadan urinib ko‘ring."), { parse_mode: "MarkdownV2" });
+  }
+});
+
+// 👤 **Foydalanuvchining o‘z muammolarini ko‘rish** (My Issues)
+bot.onText(/\/myissues/, async (msg) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  try {
+    const q = query(collection(db, "issues"), where("userId", "==", userId), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return bot.sendMessage(chatId, escapeMarkdown("❌ Siz hali hech qanday muammo qo‘shmagansiz."), { parse_mode: "MarkdownV2" });
+    }
+
+    let issuesList = "📋 *Sizning muammolaringiz:*\n\n";
+    querySnapshot.forEach((doc) => {
+      const issue = doc.data();
+      issuesList += `📌 *${escapeMarkdown(issue.title)}* \n📝 ${escapeMarkdown(issue.description)} \n📅 ${new Date(issue.createdAt.toDate()).toLocaleString()}\n\n`;
     });
 
     bot.sendMessage(chatId, issuesList, { parse_mode: "MarkdownV2" });
